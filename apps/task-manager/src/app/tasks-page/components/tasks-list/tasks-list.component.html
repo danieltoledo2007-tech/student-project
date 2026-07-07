@@ -1,0 +1,8 @@
+<p *ngIf="tasks.length === 0">no tasks yet</p>
+
+<app-task-item
+  *ngFor="let task of tasks"
+  [task]="task"
+  (delete)="delete.emit($event)"
+  (update)="update.emit($event)"
+></app-task-item>

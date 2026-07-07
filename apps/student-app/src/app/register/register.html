@@ -1,0 +1,21 @@
+<h1>student registration</h1>
+
+<p *ngIf="message()">{{ message() }}</p>
+
+<app-generic-form
+  [fields]="fields()"
+  submitLabel="register"
+  (formSubmit)="onSubmit($event)"
+></app-generic-form>
+
+<h2>registered students</h2>
+
+<p *ngIf="students().length === 0">no students yet</p>
+
+<ul>
+  <li *ngFor="let student of students()">
+    <span *ngFor="let entry of student | keyvalue">
+      {{ entry.key }}: {{ entry.value }}
+    </span>
+  </li>
+</ul>

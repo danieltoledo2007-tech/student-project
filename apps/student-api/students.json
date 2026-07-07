@@ -1,0 +1,37 @@
+[
+  {
+    "age": "10",
+    "firstName": "Daniel",
+    "grade": "2"
+  },
+  {
+    "firstName": "23456789",
+    "age": "18",
+    "grade": "55"
+  },
+  {
+    "firstName": "23456789",
+    "age": "18",
+    "grade": "55"
+  },
+  {
+    "age": "9",
+    "firstName": "ProxyTest",
+    "grade": "1"
+  },
+  {
+    "firstName": "23456789",
+    "age": "3",
+    "grade": "8"
+  },
+  {
+    "firstName": "765432",
+    "age": "43",
+    "grade": "58"
+  },
+  {
+    "firstName": "76543",
+    "age": "32",
+    "grade": "98"
+  }
+]

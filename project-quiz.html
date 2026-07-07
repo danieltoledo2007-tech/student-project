@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Project — Knowledge Quiz</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#1e293b; --card2:#273449; --accent:#38bdf8;
+    --accent2:#818cf8; --good:#22c55e; --bad:#ef4444; --text:#e2e8f0;
+    --muted:#94a3b8; --border:#334155;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(160deg,#0f172a,#111827); color:var(--text); line-height:1.5;
+    padding:32px 16px;
+  }
+  .wrap{max-width:820px; margin:0 auto}
+  header{text-align:center; margin-bottom:28px}
+  h1{font-size:1.9rem; margin:0 0 6px; background:linear-gradient(90deg,var(--accent),var(--accent2));
+     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  .sub{color:var(--muted); font-size:.95rem}
+  .bar{position:sticky; top:0; z-index:10; background:rgba(15,23,42,.9); backdrop-filter:blur(6px);
+       border:1px solid var(--border); border-radius:12px; padding:10px 16px; margin-bottom:22px;
+       display:flex; justify-content:space-between; align-items:center; font-size:.9rem}
+  .progress{height:6px; background:var(--card2); border-radius:99px; overflow:hidden; flex:1; margin:0 14px}
+  .progress > i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .3s}
+  .cat{font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent);
+       font-weight:700; margin-bottom:6px}
+  .q{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:16px}
+  .q h3{margin:0 0 14px; font-size:1.05rem; font-weight:600}
+  .q h3 .n{color:var(--muted); font-weight:700; margin-right:8px}
+  .opt{display:block; border:1px solid var(--border); background:var(--card2); border-radius:10px;
+       padding:11px 14px; margin-bottom:9px; cursor:pointer; transition:.15s; font-size:.95rem}
+  .opt:hover{border-color:var(--accent)}
+  .opt input{margin-right:10px; accent-color:var(--accent)}
+  .opt.correct{border-color:var(--good); background:rgba(34,197,94,.13)}
+  .opt.wrong{border-color:var(--bad); background:rgba(239,68,68,.13)}
+  .opt.locked{cursor:default; opacity:.95}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:99px; margin-left:8px}
+  .tag.ok{background:rgba(34,197,94,.2); color:var(--good)}
+  .tag.no{background:rgba(239,68,68,.2); color:var(--bad)}
+  button{font:inherit; font-weight:700; cursor:pointer; border:none; border-radius:10px; padding:13px 26px}
+  .submit{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#0b1220; width:100%; font-size:1.05rem; margin:8px 0 30px}
+  .submit:disabled{opacity:.5; cursor:not-allowed}
+  .reset{background:var(--card2); color:var(--text); border:1px solid var(--border)}
+  .result{display:none; text-align:center; background:var(--card); border:1px solid var(--border);
+          border-radius:16px; padding:28px; margin-bottom:24px}
+  .result.show{display:block}
+  .score{font-size:3rem; font-weight:800; background:linear-gradient(90deg,var(--accent),var(--accent2));
+         -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+  .verdict{font-size:1.15rem; margin:6px 0 14px}
+  footer{text-align:center; color:var(--muted); font-size:.82rem; margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Student Project — Deep Understanding Quiz</h1>
+    <div class="sub">Not "what is it" — but <em>why is it built this way</em>, why does the code live where it does, and what would break if it didn't. Answer everything, then submit to grade yourself.</div>
+  </header>
+
+  <div class="bar">
+    <span id="counter">0 / 0 answered</span>
+    <div class="progress"><i id="pbar"></i></div>
+    <span id="scoreLive">—</span>
+  </div>
+
+  <div class="result" id="result">
+    <div class="score" id="scoreBig">0%</div>
+    <div class="verdict" id="verdict"></div>
+    <button class="reset" onclick="location.reload()">Try again</button>
+  </div>
+
+  <form id="quiz"></form>
+
+  <button class="submit" id="submitBtn" disabled>Submit &amp; grade</button>
+
+  <footer>Self-graded quiz generated from the project source code. Nothing is sent anywhere — grading runs in your browser.</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  // ---- Why the monorepo / library boundaries ----
+  {cat:"Design · Boundaries", q:"Why place FormField in libs/shared-interfaces instead of just defining it inside the Angular app?",
+   opts:["To make the build take longer","So one type is the single source of truth that both the app and the form library depend on — neither can drift from the other","Because Angular forbids interfaces in components","It has no real reason; it's just convention"], a:1},
+  {cat:"Design · What-if", q:"What would most likely go wrong if the app and the form library each kept their OWN copy of FormField?",
+   opts:["Nothing, copies are always identical","The two definitions could drift apart and the compiler couldn't catch a shape mismatch between them","The app would run twice as fast","TypeScript would merge them automatically"], a:1},
+  {cat:"Design · Boundaries", q:"Why does the reusable form logic (GenericFormComponent, buildFormGroup) live in ui-forms rather than in the App component?",
+   opts:["To keep the App thin and let any app reuse the same form engine without copy-pasting logic","Because components can't live in apps","It was placed there by mistake","To hide it from the app"], a:0},
+  {cat:"Design · Boundaries", q:"shared-interfaces holds only types (plus a trivial function). Why is a types-only library worth having separately?",
+   opts:["Types-only libs have no runtime cost and can be imported by anything — even a backend — without pulling in UI code","It isn't; it should be merged into ui-forms","Because Nx charges per component","To slow down imports"], a:0},
+  {cat:"Design · Boundaries", q:"What's the architectural point of the dependency direction: app → ui-forms → shared-interfaces (never the reverse)?",
+   opts:["It's random","Lower-level libs stay reusable and testable in isolation because they don't know about the apps that use them","So the app can't use the libs","To create circular dependencies"], a:1},
+
+  // ---- Generic / data-driven form ----
+  {cat:"Design · Reusability", q:"Why does GenericFormComponent receive its fields via @Input instead of importing STUDENT_FORM_FIELDS directly?",
+   opts:["To avoid imports","So it stays generic — it renders whatever field config it's handed and isn't coupled to the student use-case","Because @Input is faster","Imports don't work in libraries"], a:1},
+  {cat:"Design · Data-driven", q:"Why is the student form described as DATA (STUDENT_FORM_FIELDS array) instead of hardcoded <input> tags in the template?",
+   opts:["To make it longer","Because adding/removing/validating a field becomes a one-line data change that flows through form, validation and display automatically","The template can't hold inputs","Data is required by Angular"], a:1},
+  {cat:"Design · What-if", q:"If you needed to add a 'city' field to the form tomorrow, what does the data-driven design let you do?",
+   opts:["Rewrite the component and template","Add one object to STUDENT_FORM_FIELDS — the input, its validation, and its display all follow automatically","Create a whole new component","Edit the NestJS controller"], a:1},
+  {cat:"Design · Lifecycle", q:"Why is the FormGroup built in ngOnChanges rather than in the constructor?",
+   opts:["Constructors can't run code","Because fields is an @Input — it isn't set yet at construction time and can change later; ngOnChanges rebuilds when it arrives/changes","ngOnChanges runs faster","To avoid using buildFormGroup"], a:1},
+  {cat:"Design · What-if", q:"What would actually happen if the form were built in the constructor from this.fields?",
+   opts:["It would work perfectly","fields would still be its default empty [], so the form would be built empty and never match the real inputs","Angular would throw at startup","The API would reject it"], a:1},
+  {cat:"Design · Validation", q:"Why does buildFormGroup attach Validators.required only when field.required is true?",
+   opts:["To save memory","So validation mirrors the field metadata — optional fields like 'grade' aren't blocked, required ones are","Because all fields are optional","Validators are always required"], a:1},
+  {cat:"Design · What-if", q:"'grade' is marked required:false. What would change for the user if it were accidentally set to required:true?",
+   opts:["Nothing visible","The submit button would stay disabled and an error could show until grade is filled — even though it's meant to be optional","The field would disappear","The API would crash"], a:1},
+  {cat:"Design · Binding", q:"Why does the template bind each input with [formControlName]=\"field.name\"?",
+   opts:["For styling","Because buildFormGroup keys each FormControl by field.name — matching names is what keeps the dynamic inputs wired to their controls","It's decorative","To set the label"], a:1},
+  {cat:"Design · What-if", q:"What breaks if a field.name doesn't match any control key in the FormGroup?",
+   opts:["Nothing","formControlName has no matching control, so Angular errors / that input won't bind to any value","The form auto-creates it silently and safely","The label vanishes only"], a:1},
+  {cat:"Design · UX", q:"Why show the 'is required' error only when the control is invalid AND touched, not just invalid?",
+   opts:["To hide errors forever","So the user isn't scolded before they've interacted with the field — errors appear after they've touched/left it","Because invalid alone is always false","touched is faster to evaluate"], a:1},
+  {cat:"Design · Guarding", q:"Why disable submit with [disabled]=\"form.invalid\" instead of validating only on the server?",
+   opts:["To annoy users","A client-side guard stops incomplete/invalid data from ever being sent, giving instant feedback (server checks would still be a separate concern)","Because the server has no validation ever","It's the only way to submit"], a:1},
+  {cat:"Design · Cleanup", q:"Why call form.reset() right after emitting formSubmit?",
+   opts:["To break the form","To clear the inputs for the next entry and return controls to pristine/untouched so stale errors don't linger","To log the user out","Reset is required by EventEmitter"], a:1},
+  {cat:"Design · Decoupling", q:"Why does GenericFormComponent EMIT formSubmit rather than call HttpClient and POST the data itself?",
+   opts:["Because it can't access HttpClient","Separation of concerns — the form is a reusable UI piece; the parent decides what to do with the value, so the lib stays decoupled from any API","EventEmitter is faster than HTTP","To avoid writing a service"], a:1},
+  {cat:"Design · What-if", q:"If GenericFormComponent DID call the API directly, what reusability problem would that create?",
+   opts:["None","It would be hardwired to /api/students and this app's backend, so it couldn't be reused for any other form or endpoint","It would be more generic","It would run offline"], a:1},
+
+  // ---- NgModule / exports ----
+  {cat:"Design · NgModule", q:"Why is GenericFormComponent both declared AND exported in UiFormsModule?",
+   opts:["Declaring alone is enough","Declared so it belongs to the module; exported so other modules that import UiFormsModule can actually use <app-generic-form>","Exporting alone is enough","To register it twice for safety"], a:1},
+  {cat:"Design · What-if", q:"What would happen if GenericFormComponent were declared but NOT exported from UiFormsModule?",
+   opts:["It would still work in AppModule","AppModule couldn't use it — Angular wouldn't recognize <app-generic-form> in the app template","It would render twice","Nx would auto-export it"], a:1},
+
+  // ---- Zoneless + signals ----
+  {cat:"Design · Change detection", q:"Why store students and message as signals rather than plain class properties in THIS app?",
+   opts:["Signals look nicer","Because the app runs zoneless — signals are what tell Angular to update the view when the value changes","Plain properties don't exist in TypeScript","Signals are required for HttpClient"], a:1},
+  {cat:"Design · What-if", q:"Under provideZonelessChangeDetection(), what would likely happen if 'students' were a plain array updated after an HTTP response?",
+   opts:["The view updates as usual","The template might not refresh, because without zone.js nothing signals Angular to re-check the view after the async change","It would throw a compile error","The API would retry"], a:1},
+  {cat:"Design · Rationale", q:"What is the point of going zoneless (provideZonelessChangeDetection) at all?",
+   opts:["To disable change detection entirely","To drop zone.js and drive updates explicitly (via signals) — lighter and more predictable change detection","To make the app single-threaded","It's required by NestJS"], a:1},
+
+  // ---- HTTP / server state ----
+  {cat:"Design · Source of truth", q:"After a successful POST, why does the App re-call loadStudents() instead of just pushing the new student into the signal locally?",
+   opts:["To waste bandwidth","To reflect the server's authoritative state (the JSON file) — guaranteeing the UI matches what was actually persisted","Because signals can't be updated","POST doesn't return anything"], a:1},
+  {cat:"Design · Trade-off", q:"What's the trade-off of that re-fetch, and why is it acceptable here?",
+   opts:["It's faster but wrong","It costs an extra round-trip, but it's simple and keeps the UI consistent with the server — fine for a small app","There is no downside at all","It breaks CORS"], a:1},
+  {cat:"Design · DI", q:"Why must provideHttpClient() be in AppModule's providers for inject(HttpClient) to work?",
+   opts:["It doesn't need to be","inject() pulls HttpClient from DI; without the provider registering it, the injection would fail at runtime","HttpClient is global","provideHttpClient only affects the server"], a:1},
+
+  // ---- Backend design ----
+  {cat:"Design · API prefix", q:"Why does the NestJS app set a global prefix of 'api' (setGlobalPrefix('api'))?",
+   opts:["For decoration","To namespace all backend routes under /api so they don't collide with frontend routes and a proxy can cleanly forward /api/* to the server","Because Nest requires it","To make URLs longer"], a:1},
+  {cat:"Design · Same-origin", q:"Why does the frontend call the relative '/api/students' instead of 'http://localhost:3000/students'?",
+   opts:["Because 3000 is blocked","A relative same-origin URL works in dev (via proxy) and prod without hardcoding host/port, and avoids browser CORS issues","It's a typo","Angular can't use full URLs"], a:1},
+  {cat:"Design · Persistence", q:"Why persist to a students.json file with fs instead of standing up a real database?",
+   opts:["Files are always better than databases","Simplicity for a small/demo project — zero setup; the trade-off is no real concurrency safety or scalability","Because NestJS can't use databases","To make it production-grade"], a:1},
+  {cat:"Design · What-if", q:"The controller reads the whole file, pushes, then writes it back. What real risk does this create under concurrent POSTs?",
+   opts:["None, Node is magic","A race condition — two overlapping writes could overwrite each other and lose a student","It doubles performance","It encrypts the data"], a:1},
+  {cat:"Design · Robustness", q:"Why does getStudents check fs.existsSync and return [] when the file is missing?",
+   opts:["To hide data","A defensive default so the very first run (no file yet) doesn't crash — the UI just shows an empty list","Because the file never exists","To reset the DB daily"], a:1},
+  {cat:"Design · Typing", q:"Why is the HTTP data typed as Record<string,string>[] rather than a fixed Student class?",
+   opts:["Laziness","Because the form is generic and its fields can change — records are open-shaped key/value maps, consistent with the data-driven design","Record is required by NestJS","Classes can't be sent over HTTP"], a:1},
+  {cat:"Design · Config", q:"Why does the API read the port from process.env.PORT with a fallback to 3000?",
+   opts:["To hardcode the port","Configurability — a deployment can set PORT, while it still runs locally on a sane default","Random choice","3000 is mandatory"], a:1},
+
+  // ---- Router / structure now vs later ----
+  {cat:"Design · Forethought", q:"appRoutes is currently []. Why wire RouterModule.forRoot([]) at all if there are no routes yet?",
+   opts:["It does nothing useful","There's one view now, but wiring the router upfront makes adding pages later trivial without restructuring bootstrap","To slow startup","Because BrowserModule needs it"], a:1},
+
+  // ---- View rendering ----
+  {cat:"Design · Generic view", q:"Why render each student with the keyvalue pipe and nested *ngFor instead of fixed columns like Name/Age/Grade?",
+   opts:["To look messy","Because records are generic key/value maps — the view adapts to whatever fields exist, mirroring the data-driven form","keyvalue is faster","Columns aren't allowed in Angular"], a:1},
+
+  // ---- Big picture ----
+  {cat:"Design · Core idea", q:"What single idea ties the whole project together (fields config → dynamic form → generic record → generic list)?",
+   opts:["Copy-paste everywhere","'Data drives the UI' — describe fields as data once, and the form, validation, persistence and display all adapt with minimal code","Everything is hardcoded for speed","Each layer is fully independent and shares nothing"], a:1},
+  {cat:"Design · Testing", q:"Why keep e2e tests in a separate student-api-e2e project instead of next to the unit tests?",
+   opts:["To duplicate work","e2e tests run against a running app with a different lifecycle/config — isolating them keeps unit tests fast and concerns separated","Because Nx bans unit tests","They are the same thing"], a:1},
+];
+
+const form = document.getElementById('quiz');
+const submitBtn = document.getElementById('submitBtn');
+const counter = document.getElementById('counter');
+const pbar = document.getElementById('pbar');
+const scoreLive = document.getElementById('scoreLive');
+let graded = false;
+
+QUESTIONS.forEach((item, i) => {
+  const card = document.createElement('div');
+  card.className = 'q';
+  card.innerHTML = `<div class="cat">${item.cat}</div>
+    <h3><span class="n">Q${i+1}.</span>${item.q}</h3>` +
+    item.opts.map((o, j) => `
+      <label class="opt" data-q="${i}" data-opt="${j}">
+        <input type="radio" name="q${i}" value="${j}"> ${o}
+      </label>`).join('');
+  form.appendChild(card);
+});
+
+form.addEventListener('change', () => {
+  if (graded) return;
+  const answered = QUESTIONS.filter((_, i) => form.querySelector(`input[name="q${i}"]:checked`)).length;
+  counter.textContent = `${answered} / ${QUESTIONS.length} answered`;
+  pbar.style.width = (answered / QUESTIONS.length * 100) + '%';
+  submitBtn.disabled = answered !== QUESTIONS.length;
+});
+
+submitBtn.addEventListener('click', () => {
+  if (graded) return;
+  graded = true;
+  let score = 0;
+  QUESTIONS.forEach((item, i) => {
+    const chosen = form.querySelector(`input[name="q${i}"]:checked`);
+    const chosenVal = chosen ? parseInt(chosen.value) : -1;
+    if (chosenVal === item.a) score++;
+    form.querySelectorAll(`label[data-q="${i}"]`).forEach(lbl => {
+      const opt = parseInt(lbl.dataset.opt);
+      lbl.classList.add('locked');
+      lbl.querySelector('input').disabled = true;
+      if (opt === item.a) {
+        lbl.classList.add('correct');
+        lbl.insertAdjacentHTML('beforeend', '<span class="tag ok">correct answer</span>');
+      } else if (opt === chosenVal) {
+        lbl.classList.add('wrong');
+        lbl.insertAdjacentHTML('beforeend', '<span class="tag no">your answer</span>');
+      }
+    });
+  });
+
+  const pct = Math.round(score / QUESTIONS.length * 100);
+  const res = document.getElementById('result');
+  document.getElementById('scoreBig').textContent = pct + '%';
+  const verdict = pct === 100 ? "Perfect — you know this project inside out! 🎉"
+    : pct >= 80 ? "Strong grasp of the project. A couple of gaps to review."
+    : pct >= 60 ? "Decent — worth another pass over the source."
+    : "Time to dig back into the code and try again.";
+  document.getElementById('verdict').textContent = `You scored ${score} / ${QUESTIONS.length}. ${verdict}`;
+  res.classList.add('show');
+  scoreLive.textContent = `Score: ${pct}%`;
+  submitBtn.textContent = `Scored ${score}/${QUESTIONS.length}`;
+  submitBtn.disabled = true;
+  res.scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>

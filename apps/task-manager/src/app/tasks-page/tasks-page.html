@@ -1,0 +1,16 @@
+<h1>tasks</h1>
+
+<button (click)="openModal()">add task</button>
+
+<app-tasks-list
+  [tasks]="tasks()"
+  (delete)="deleteTask($event)"
+  (update)="updateTask($event)"
+></app-tasks-list>
+
+<div class="modal-backdrop" *ngIf="isModalOpen()">
+  <div class="modal">
+    <app-task-form (save)="addTask($event)"></app-task-form>
+    <button (click)="closeModal()">cancel</button>
+  </div>
+</div>
