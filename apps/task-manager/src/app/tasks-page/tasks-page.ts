@@ -45,7 +45,16 @@ export class TasksPage implements OnInit {
   }
 
   addTask(value: Record<string, unknown>): void {
-    this.store.dispatch(TaskActions.addTask({ task: value as unknown as Task }));
+    // The generic form emits every field as a string (dynamic [type] binding
+    // makes Angular fall back to the DefaultValueAccessor), so coerce the
+    // values to the types the server's CreateTaskDto expects.
+    const task: Task = {
+      id: Number(value['id']),
+      taskname: String(value['taskname'] ?? ''),
+      description: String(value['description'] ?? ''),
+      completed: value['completed'] === true || value['completed'] === 'true',
+    };
+    this.store.dispatch(TaskActions.addTask({ task }));
     this.closeModal();
   }
 

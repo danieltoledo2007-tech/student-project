@@ -1,15 +1,9 @@
 [
   {
-    "id": 3,
-    "taskname": "Buy groceries",
-    "description": "Milk, eggs and bread",
-    "completed": false
-  },
-  {
     "id": 4,
     "taskname": "Buy groceries",
     "description": " 12",
-    "completed": false
+    "completed": true
   },
   {
     "id": 5,
@@ -21,6 +15,18 @@
     "id": 6,
     "taskname": "Buy groceries",
     "description": 18,
+    "completed": true
+  },
+  {
+    "id": 1,
+    "taskname": "survive",
+    "description": "this day",
+    "completed": true
+  },
+  {
+    "id": 2,
+    "taskname": "go eat",
+    "description": "i want lunch in 25 minutes",
     "completed": false
   }
 ]
