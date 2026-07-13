@@ -3,9 +3,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Task } from '@student-project/shared-interfaces';
 import { TaskActions } from './store/task.actions';
-import { selectAllTasks } from './store/task.selectors';
+// NOT NEEDED ANYMORE — the manual selectors, replaced by tasksFeature:
+// import { selectAllTasks, selectTasksLoading } from './store/task.selectors';
+import { tasksFeature } from './store/task.feature';
 
-/**
+/*
  * REDUX VERSION of the tasks page.
  *
  * Compare with the original (master branch): this component no longer owns
@@ -29,7 +31,12 @@ import { selectAllTasks } from './store/task.selectors';
 export class TasksPage implements OnInit {
   private store = inject(Store);
 
-  tasks = toSignal(this.store.select(selectAllTasks), { initialValue: [] });
+  // NOT NEEDED ANYMORE — the manual-selector versions:
+  // tasks = toSignal(this.store.select(selectAllTasks), { initialValue: [] });
+  // loading = toSignal(this.store.select(selectTasksLoading), { initialValue: false });
+  // createFeature versions — same behavior, selectors are auto-generated:
+  tasks = toSignal(this.store.select(tasksFeature.selectTasks), { initialValue: [] });
+  loading = toSignal(this.store.select(tasksFeature.selectLoading), { initialValue: false });
   isModalOpen = signal(false);
 
   ngOnInit(): void {

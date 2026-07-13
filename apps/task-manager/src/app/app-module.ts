@@ -17,7 +17,9 @@ import { TasksPage } from './tasks-page/tasks-page';
 import { TasksListComponent } from './tasks-page/components/tasks-list/tasks-list.component';
 import { TaskItemComponent } from './tasks-page/components/task-item/task-item.component';
 import { TaskFormComponent } from './tasks-page/components/task-form/task-form.component';
-import { TASKS_FEATURE_KEY, tasksReducer } from './tasks-page/store/task.reducer';
+// NOT NEEDED ANYMORE — replaced by the createFeature import below:
+// import { TASKS_FEATURE_KEY, tasksReducer } from './tasks-page/store/task.reducer';
+import { tasksFeature } from './tasks-page/store/task.feature';
 import { TaskEffects } from './tasks-page/store/task.effects';
 
 @NgModule({
@@ -35,7 +37,10 @@ import { TaskEffects } from './tasks-page/store/task.effects';
     RouterModule.forRoot(appRoutes),
     // register the global store + the tasks slice
     StoreModule.forRoot({}),
-    StoreModule.forFeature(TASKS_FEATURE_KEY, tasksReducer),
+    // NOT NEEDED ANYMORE — the manual (key + reducer) registration:
+    // StoreModule.forFeature(TASKS_FEATURE_KEY, tasksReducer),
+    // createFeature version — the feature object carries both name and reducer:
+    StoreModule.forFeature(tasksFeature),
     EffectsModule.forRoot([TaskEffects]),
     // enables Redux DevTools time-travel debugging in the browser
     StoreDevtoolsModule.instrument({ maxAge: 25 }),

@@ -1,3 +1,9 @@
+/**
+ * ⚠️ NOT NEEDED ANYMORE — replaced by task.feature.ts (createFeature version).
+ * The interface, initialState and reducer below moved into createFeature({...}).
+ * TASKS_FEATURE_KEY was replaced by `name: 'tasks'` inside createFeature.
+ * Kept only for comparison/learning — safe to delete once you're comfortable.
+ */
 import { createReducer, on } from '@ngrx/store';
 import { Task } from '@student-project/shared-interfaces';
 import { TaskActions } from './task.actions';

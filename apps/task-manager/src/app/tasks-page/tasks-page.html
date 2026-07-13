@@ -2,6 +2,7 @@
 
 <button (click)="openModal()">add task</button>
 
+<img *ngIf="loading()" src="loading.svg" alt="loading" />
 <app-tasks-list
   [tasks]="tasks()"
   (delete)="deleteTask($event)"

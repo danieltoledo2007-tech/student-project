@@ -1,7 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div *ngFor="let field of fields" class="form-field">
     <label [for]="field.name">{{ field.label }}</label>
+    <!-- checkbox needs a STATIC type so Angular picks the CheckboxControlValueAccessor
+         (which emits a boolean). A dynamic [type] falls back to the DefaultValueAccessor
+         and never reports the checked state. -->
     <input
+      *ngIf="field.type === 'checkbox'"
+      [id]="field.name"
+      type="checkbox"
+      [formControlName]="field.name"
+    />
+    <input
+      *ngIf="field.type !== 'checkbox'"
       [id]="field.name"
       [type]="field.type"
       [formControlName]="field.name"
