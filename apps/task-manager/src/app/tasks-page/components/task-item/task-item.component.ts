@@ -9,6 +9,7 @@ import { Task } from '@student-project/shared-interfaces';
 })
 export class TaskItemComponent {
   @Input() task!: Task;
-  @Output() delete = new EventEmitter<number>();
-  @Output() update = new EventEmitter<number>();
+  // היה EventEmitter<number> — הכפתורים משדרים עכשיו את ה-_id (מחרוזת)
+  @Output() delete = new EventEmitter<string>();
+  @Output() update = new EventEmitter<string>();
 }

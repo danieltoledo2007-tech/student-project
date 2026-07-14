@@ -18,11 +18,12 @@ export class TasksFrontService {
     return this.http.post<{ success: boolean }>(this.baseUrl, task);
   }
 
-  deleteById(id: number): Observable<{ success: boolean }> {
+  // היה id: number בשתי הפונקציות — עכשיו _id של מונגו, שהוא מחרוזת
+  deleteById(id: string): Observable<{ success: boolean }> {
     return this.http.delete<{ success: boolean }>(`${this.baseUrl}/${id}`);
   }
 
-  toggle(id: number): Observable<{ success: boolean }> {
+  toggle(id: string): Observable<{ success: boolean }> {
     return this.http.patch<{ success: boolean }>(`${this.baseUrl}/${id}/toggle`, {});
   }
 }

@@ -1,5 +1,6 @@
 <div>
-  <span>{{ task.id }} - {{ task.taskname }} - {{ task.completed ? 'Complited' : 'notComplited ' }}</span>
-  <button (click)="delete.emit(task.id)">delete</button>
-  <button (click)="update.emit(task.id)">update</button>
+  <!-- היה: {{ task.id }} בתחילת השורה, והכפתורים שלחו task.id -->
+  <span>{{ task.taskname }} - {{ task.completed ? 'Complited' : 'notComplited ' }}</span>
+  <button (click)="delete.emit(task._id!)">delete</button>
+  <button (click)="update.emit(task._id!)">update</button>
 </div>

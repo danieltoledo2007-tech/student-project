@@ -1,16 +1,17 @@
-import{IsBoolean, IsNumber, IsString} from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
-export class CreateTaskDto{
-    @IsNumber()
-    id!:number;
+export class CreateTaskDto {
+  // השדה id הוסר: הזהות היא אחריות של מונגו (_id), הלקוח שולח רק תוכן.
+  // היה כאן:
+  //   @IsNumber()
+  //   id!: number;
 
-    @IsString()
-    taskname!:string;
+  @IsString()
+  taskname!: string;
 
-    @IsString()
-    description!:string;
+  @IsString()
+  description!: string;
 
-    @IsBoolean()
-    completed!:boolean;
-
+  @IsBoolean()
+  completed!: boolean;
 }

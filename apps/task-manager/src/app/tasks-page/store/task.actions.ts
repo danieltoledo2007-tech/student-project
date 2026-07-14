@@ -20,14 +20,14 @@ export const TaskActions = createActionGroup({
     'Add Task Success': emptyProps(),
     'Add Task Failure': props<{ error: string }>(),
 
-    // delete
-    'Delete Task': props<{ id: number }>(),
-    'Delete Task Success': props<{ id: number }>(),
+    // delete — היה id: number; עכשיו נושא את ה-_id של מונגו (מחרוזת)
+    'Delete Task': props<{ id: string }>(),
+    'Delete Task Success': props<{ id: string }>(),
     'Delete Task Failure': props<{ error: string }>(),
 
-    // toggle completed
-    'Toggle Task': props<{ id: number }>(),
-    'Toggle Task Success': props<{ id: number }>(),
+    // toggle completed — היה id: number
+    'Toggle Task': props<{ id: string }>(),
+    'Toggle Task Success': props<{ id: string }>(),
     'Toggle Task Failure': props<{ error: string }>(),
   },
 });

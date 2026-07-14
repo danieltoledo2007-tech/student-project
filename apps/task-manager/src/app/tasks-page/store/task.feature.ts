@@ -46,17 +46,17 @@ export const tasksFeature = createFeature({
       error,
     })),
 
-    // delete — remove the task from the store directly
+    // delete — remove the task from the store directly (היה t.id, עכשיו t._id)
     on(TaskActions.deleteTaskSuccess, (state, { id }) => ({
       ...state,
-      tasks: state.tasks.filter((t) => t.id !== id),
+      tasks: state.tasks.filter((t) => t._id !== id),
     })),
 
-    // toggle — flip `completed` on the matching task directly
+    // toggle — flip `completed` on the matching task directly (היה t.id)
     on(TaskActions.toggleTaskSuccess, (state, { id }) => ({
       ...state,
       tasks: state.tasks.map((t) =>
-        t.id === id ? { ...t, completed: !t.completed } : t
+        t._id === id ? { ...t, completed: !t.completed } : t
       ),
     })),
 

@@ -1,6 +1,8 @@
 export interface Task {
-  id:number;
-  taskname: string;     
-  description:string;
-  completed:boolean;
+  // היה: id: number — הוחלף ב-_id שמונגו מייצר בשרת.
+  // אופציונלי (?) כי משימה חדשה, לפני השמירה, עוד לא קיבלה _id.
+  _id?: string;
+  taskname: string;
+  description: string;
+  completed: boolean;
 }

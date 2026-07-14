@@ -56,7 +56,7 @@ export class TasksPage implements OnInit {
     // makes Angular fall back to the DefaultValueAccessor), so coerce the
     // values to the types the server's CreateTaskDto expects.
     const task: Task = {
-      id: Number(value['id']),
+      // היה: id: Number(value['id']) — הזהות עברה לאחריות השרת (מונגו _id)
       taskname: String(value['taskname'] ?? ''),
       description: String(value['description'] ?? ''),
       completed: value['completed'] === true || value['completed'] === 'true',
@@ -65,11 +65,12 @@ export class TasksPage implements OnInit {
     this.closeModal();
   }
 
-  deleteTask(id: number): void {
+  // היה id: number בשתיהן — עכשיו ה-_id (מחרוזת) שמגיע מהכפתורים
+  deleteTask(id: string): void {
     this.store.dispatch(TaskActions.deleteTask({ id }));
   }
 
-  updateTask(id: number): void {
+  updateTask(id: string): void {
     this.store.dispatch(TaskActions.toggleTask({ id }));
   }
 }

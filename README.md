@@ -62,6 +62,31 @@ development without CORS issues.
 npm install
 ```
 
+### Configuration (.env)
+
+The API port is configurable through an environment file that is **not**
+committed (`apps/.env` is git-ignored, so each developer keeps their own copy).
+
+1. Copy the template:
+
+   ```sh
+   cp apps/.env.example apps/.env
+   ```
+
+2. Open `apps/.env` and set the port you need:
+
+   ```
+   PORT=3000
+   ```
+
+If you don't create the file at all, the API falls back to port `3000`.
+
+> **Changing the port?** The front-ends proxy `/api` to
+> `http://localhost:3000` via each app's `proxy.conf.json`. If you set a
+> different `PORT`, update the `target` in
+> `apps/student-app/proxy.conf.json` and `apps/task-manager/proxy.conf.json`
+> to match, otherwise the front-ends won't reach the API.
+
 Run the back-end first (or let Nx start it via the front-end's `dependsOn`):
 
 ```sh
