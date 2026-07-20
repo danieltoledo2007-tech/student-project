@@ -21,6 +21,10 @@ import { TaskFormComponent } from './tasks-page/components/task-form/task-form.c
 // import { TASKS_FEATURE_KEY, tasksReducer } from './tasks-page/store/task.reducer';
 import { tasksFeature } from './tasks-page/store/task.feature';
 import { TaskEffects } from './tasks-page/store/task.effects';
+import { LoginPageComponent } from './auth/login.page/login-page.component';
+import { RegisterPageComponent } from './auth/register.page/register-page.component';
+import { AuthService } from './auth/auth.service';
+
 
 @NgModule({
   declarations: [
@@ -29,6 +33,8 @@ import { TaskEffects } from './tasks-page/store/task.effects';
     TasksListComponent,
     TaskItemComponent,
     TaskFormComponent,
+    LoginPageComponent,
+    RegisterPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,11 +50,13 @@ import { TaskEffects } from './tasks-page/store/task.effects';
     EffectsModule.forRoot([TaskEffects]),
     // enables Redux DevTools time-travel debugging in the browser
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
+   
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideHttpClient(),
+    AuthService,
   ],
   bootstrap: [App],
 })

@@ -1,0 +1,13 @@
+<h1>Register</h1>
+
+
+<p *ngIf="message()">{{ message() }}</p>
+
+<app-generic-form
+  [fields]="fields()"
+  submitLabel="register"
+  (formSubmit)="onSubmit($event)"
+></app-generic-form>
+
+
+<a routerLink="/login">already registered? log in</a>

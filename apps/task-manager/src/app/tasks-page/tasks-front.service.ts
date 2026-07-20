@@ -10,9 +10,9 @@ export class TasksFrontService {
   private http = inject(HttpClient);
   private baseUrl = '/api/tasks';
 
-  getAll(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.baseUrl);
-  }
+getAll(userId: string): Observable<Task[]> {
+  return this.http.get<Task[]>(`${this.baseUrl}/user/${userId}`);
+}
 
   add(task: Task): Observable<{ success: boolean }> {
     return this.http.post<{ success: boolean }>(this.baseUrl, task);

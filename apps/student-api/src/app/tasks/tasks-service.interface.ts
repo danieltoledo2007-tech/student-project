@@ -6,7 +6,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
  * בדיוק את החתימות האלה. אין כאן שום קוד — רק צורות.
  */
 export interface ITasksService {
-  getAll(): Promise<Task[]>;
+  getAll(userId:string): Promise<Task[]>;
   getById(id: string): Promise<Task | null>;
   add(dto: CreateTaskDto): Promise<{ success: boolean }>;
   deleteById(id: string): Promise<{ success: boolean }>;

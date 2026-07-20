@@ -12,9 +12,9 @@ export class MongoTasksService implements ITasksService {
     @InjectModel(TaskEntity.name) private taskModel: Model<TaskEntity>,
   ) {}
 
-  async getAll(): Promise<Task[]> {
+  async getAll(userId: string): Promise<Task[]> {
     // lean() מחזיר אובייקטים פשוטים (בלי מתודות של mongoose) — מתאים לחוזה
-    return this.taskModel.find().lean<Task[]>();
+    return this.taskModel.find({ userId }).lean<Task[]>();
   }
 
   async getById(id: string): Promise<Task | null> {

@@ -10,9 +10,10 @@ export class TasksController {
     @Inject(TASKS_SERVICE) private tasksService: ITasksService,
   ) {}
 
-  @Get('')
-  getAll(): Promise<Task[]> {
-    return this.tasksService.getAll();
+  // 'user/:userId' ולא ':userId' לבד — אחרת היה מתנגש עם @Get(':id') של משימה בודדת
+  @Get('user/:userId')
+  getAll(@Param('userId') userId: string): Promise<Task[]> {
+    return this.tasksService.getAll(userId);
   }
 
   @Get(':id')

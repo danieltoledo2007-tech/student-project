@@ -5,6 +5,8 @@ export class CreateTaskDto {
   // היה כאן:
   //   @IsNumber()
   //   id!: number;
+    @IsString()
+  userId!:string;
 
   @IsString()
   taskname!: string;

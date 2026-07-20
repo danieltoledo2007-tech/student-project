@@ -1,0 +1,9 @@
+<p *ngIf="message()">{{ message() }}</p>
+
+<app-generic-form
+  [fields]="fields()"
+  submitLabel="log in"
+  (formSubmit)="onSubmit($event)"
+></app-generic-form>
+
+<a routerLink="/register">don't have an account? register</a>

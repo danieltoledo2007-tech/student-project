@@ -6,7 +6,7 @@ import { TaskActions } from './store/task.actions';
 // NOT NEEDED ANYMORE — the manual selectors, replaced by tasksFeature:
 // import { selectAllTasks, selectTasksLoading } from './store/task.selectors';
 import { tasksFeature } from './store/task.feature';
-
+import { AuthService } from '../auth/auth.service';
 /*
  * REDUX VERSION of the tasks page.
  *
@@ -30,7 +30,7 @@ import { tasksFeature } from './store/task.feature';
 })
 export class TasksPage implements OnInit {
   private store = inject(Store);
-
+private auth = inject(AuthService);
   // NOT NEEDED ANYMORE — the manual-selector versions:
   // tasks = toSignal(this.store.select(selectAllTasks), { initialValue: [] });
   // loading = toSignal(this.store.select(selectTasksLoading), { initialValue: false });
@@ -57,6 +57,7 @@ export class TasksPage implements OnInit {
     // values to the types the server's CreateTaskDto expects.
     const task: Task = {
       // היה: id: Number(value['id']) — הזהות עברה לאחריות השרת (מונגו _id)
+      userId:(this.auth.userId() ??  ''),
       taskname: String(value['taskname'] ?? ''),
       description: String(value['description'] ?? ''),
       completed: value['completed'] === true || value['completed'] === 'true',

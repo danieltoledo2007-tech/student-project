@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { TasksFrontService } from '../tasks-front.service';
 import { TaskActions } from './task.actions';
-
+import { AuthService } from '../../auth/auth.service';
 /**
  * EFFECTS = where the side-effects (HTTP) live, OUTSIDE the components.
  * Pattern: listen for a request action -> call the existing service ->
@@ -15,12 +15,12 @@ import { TaskActions } from './task.actions';
 export class TaskEffects {
   private actions$ = inject(Actions);
   private tasksService = inject(TasksFrontService);
-
+  private auth = inject(AuthService);
   loadTasks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.loadTasks),
       switchMap(() =>
-        this.tasksService.getAll().pipe(
+        this.tasksService.getAll(this.auth.userId()??'').pipe(
           map((tasks) => TaskActions.loadTasksSuccess({ tasks })),
           catchError((err) =>
             of(TaskActions.loadTasksFailure({ error: String(err) }))
